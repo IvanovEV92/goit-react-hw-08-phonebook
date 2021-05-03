@@ -43,7 +43,7 @@ class Form extends Component {
 						type="tel"
 						name="number"
 						value={number}
-						placeholder="Enter number"
+						placeholder="Введите номер"
 						// pattern="(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})"
 						title="Номер телефона должен состоять из 11-12 цифр и может содержать цифры, пробелы, тире, пузатые скобки и может начинаться с +"
 						required
