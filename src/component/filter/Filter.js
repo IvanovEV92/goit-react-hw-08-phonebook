@@ -9,7 +9,7 @@ const Filter = ({ value, onChange }) => {
 			className={styles.search}
 			type="text"
 			value={value}
-			placeholder="Search"
+			placeholder="Поиск"
 			onChange={onChange}
 		/>
 	);

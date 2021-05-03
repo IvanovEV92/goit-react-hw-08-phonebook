@@ -1,35 +1,54 @@
-import { Component } from 'react';
+import React, { Component, Suspense, lazy } from 'react';
+import { Switch } from 'react-router-dom';
 
-import ContactForm from './component/form';
-import ContactList from './component/ContactList';
-import Filter from './component/filter';
+import AppBar from './component/AppBar';
+import PrivateRoute from './component/PrivateRoute';
+import PublicRoute from './component/PublicRoute';
+import { authOperations } from './redux/auth';
 import { connect } from 'react-redux';
-import contactSelectors from './redux/contact/contact-selectors';
 
-import contactOperation from './redux/contact/contact-operations';
+const HomeView = lazy(() => import('./views/HomeView'));
+const RegisterView = lazy(() => import('./views/RegisterView'));
+const LoginView = lazy(() => import('./views/LoginView'));
+const ContactView = lazy(() => import('./views/ContactView'));
 class App extends Component {
 	componentDidMount() {
-		this.props.fetchContacts();
+		this.props.onGetCurretnUser();
 	}
+
 	render() {
 		return (
-			<section>
-				<h1>Phonebook</h1>
-				<ContactForm />
-				{this.props.isLoadingContacts && <h1>Загружаем...</h1>}
-				<h2>Contacts</h2>
-				<Filter />
-				<ContactList />
-			</section>
+			<>
+				<AppBar />
+				<Suspense fallback={<p>Загружаем...</p>}>
+					<Switch>
+						<PublicRoute exact path="/" component={HomeView} />
+						<PublicRoute
+							path="/register"
+							restricted
+							redirectTo="/contacts"
+							component={RegisterView}
+						/>
+						<PublicRoute
+							path="/login"
+							restricted
+							redirectTo="/contacts"
+							component={LoginView}
+						/>
+						<PrivateRoute
+							path="/contacts"
+							redirectTo="/login"
+							component={ContactView}
+						/>
+					</Switch>
+				</Suspense>
+			</>
 		);
 	}
 }
-const mapStateToProps = state => {
-	isLoadingContacts: contactSelectors.getLoading(state);
+
+const mapDispatchToProps = {
+	onGetCurretnUser: authOperations.getCurrentUser,
 };
-const mapDispatchToProps = dispatch => {
-	return {
-		fetchContacts: () => dispatch(contactOperation.fetchContact()),
-	};
-};
+
 export default connect(null, mapDispatchToProps)(App);
